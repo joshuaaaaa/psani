@@ -33,12 +33,8 @@ Nejnovější verze je vždy v sekci **[Releases](https://github.com/joshuaaaaa/
 ### Jak vydat novou verzi
 
 1. Zvyš `version` v `package.json` (např. `2.2.0`).
-2. Commitni a pushni, pak vytvoř a pushni tag se stejným číslem:
-   ```bash
-   git tag v2.2.0
-   git push origin v2.2.0
-   ```
-3. GitHub Actions sestaví `.exe` a zveřejní je jako Release – nainstalované programy si je pak samy stáhnou.
+2. Dostaň změnu na hlavní větev repozitáře (commit / sloučení pull requestu).
+3. GitHub Actions sestaví `.exe` a samy zveřejní Release `v2.2.0` – nainstalované programy si ho pak stáhnou.
 
 ## Vyzkoušení bez instalace
 
