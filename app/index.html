@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
+  <title>Psaní všemi deseti</title>
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <img class="logo" src="icon.png" alt="">
+        <div>
+          <div class="brand-name">Psaní všemi deseti</div>
+          <div class="brand-sub">výukový kurz</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <button data-view="home" class="active"><span>📚</span> Lekce</button>
+        <button data-view="custom"><span>✍️</span> Vlastní text</button>
+        <button data-view="weak"><span>🎯</span> Slabá místa</button>
+        <button data-view="stats"><span>📈</span> Statistiky</button>
+        <button data-view="settings"><span>⚙️</span> Nastavení</button>
+        <button data-view="help"><span>❓</span> Jak na to</button>
+      </nav>
+      <div class="profile">
+        <label for="profileSelect">Uživatel</label>
+        <select id="profileSelect"></select>
+      </div>
+    </aside>
+    <main id="view" class="main" tabindex="-1"></main>
+  </div>
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true"></div>
+  <script src="js/layout.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/lessons.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
