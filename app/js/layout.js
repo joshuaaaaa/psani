@@ -83,6 +83,7 @@ const Layout = (() => {
     for (const row of rows) for (const key of row) if (!byCode[key.code]) byCode[key.code] = key;
     for (const row of rows) {
       for (const key of row) {
+        if (key.code === 'IntlBackslash') continue; // na notebookách chybí – \ a | učíme přes AltGr
         if (key.base && !DEAD[key.base] && !charMap[key.base]) charMap[key.base] = [{ code: key.code }];
         if (key.shift && !DEAD[key.shift] && !charMap[key.shift]) charMap[key.shift] = [{ code: key.code, shift: shiftFor(key.code) }];
       }

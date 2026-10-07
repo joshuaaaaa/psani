@@ -78,6 +78,8 @@ h2 { font-size: 19px; }
 .nav button:hover { background: var(--panel-2); }
 .nav button.active { background: var(--accent-soft); color: var(--accent-2); font-weight: 600; }
 :root[data-theme="dark"] .nav button.active { color: var(--text); }
+.update-box { margin-top: auto; background: var(--accent-soft); border-radius: 12px; padding: 10px 12px; font-size: 13px; display: flex; flex-direction: column; gap: 8px; }
+.update-box + .profile { margin-top: 0; }
 .profile { margin-top: auto; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); padding: 0 6px; }
 
 select, input[type="text"], input[type="number"], textarea {

@@ -22,7 +22,15 @@
     if (!data || typeof data !== 'object') data = {};
     data.settings = Object.assign({}, DEFAULT_SETTINGS, data.settings || {});
     if (!data.profiles || !Object.keys(data.profiles).length) data.profiles = { 'Já': newProfile() };
-    for (const p of Object.values(data.profiles)) { p.done = p.done || {}; p.history = p.history || []; p.keys = p.keys || {}; }
+    for (const p of Object.values(data.profiles)) {
+      p.done = p.done || {}; p.history = p.history || []; p.keys = p.keys || {};
+      // verze 2.0 ukládala postup podle čísla lekce – převod na stálé klíče
+      if (Object.keys(p.done).some(k => /^\d+$/.test(k))) {
+        const done = {};
+        for (const [k, v] of Object.entries(p.done)) done[/^\d+$/.test(k) ? Lessons.OLD_ORDER[k - 1] || k : k] = v;
+        p.done = done;
+      }
+    }
     if (!data.profiles[data.current]) data.current = Object.keys(data.profiles)[0];
     return data;
   }
@@ -193,7 +201,7 @@
         <div style="opacity:.9;margin-bottom:10px">Hotovo ${doneCount} z ${LESSONS.length} lekcí</div>
         <div class="progress-outer"><div class="progress-inner" style="width:${doneCount / LESSONS.length * 100}%"></div></div>
       </div>
-      <button class="btn" id="continueBtn">▶ ${doneCount ? 'Pokračovat' : 'Začít'}: lekce ${next.id} – ${esc(next.title)}</button>
+      <button class="btn" id="continueBtn">▶ ${doneCount ? 'Pokračovat' : 'Začít'}: lekce ${next.num} – ${esc(next.title)}</button>
     </div>`;
     let group = null;
     for (const l of LESSONS) {
@@ -209,12 +217,12 @@
       if (d && d.stars > 0) cls.push('done');
       if (l === next) cls.push('next');
       const sub = d ? `${starsHtml(d.stars)} · ${d.best} úh/min` : (l.add ? 'Nové: ' + esc([...l.add].join(' ')) : '&nbsp;');
-      html += `<button class="${cls.join(' ')}" data-lesson="${l.id}"><span class="num">${l.id}</span><span class="t">${esc(l.title)}</span><span class="s">${sub}</span></button>`;
+      html += `<button class="${cls.join(' ')}" data-lesson="${l.id}"><span class="num">${l.num}</span><span class="t">${esc(l.title)}</span><span class="s">${sub}</span></button>`;
     }
     html += '</div>';
     view.innerHTML = html;
     $('#continueBtn').onclick = () => startLesson(next.id);
-    $$('[data-lesson]').forEach(b => b.onclick = () => startLesson(+b.dataset.lesson));
+    $$('[data-lesson]').forEach(b => b.onclick = () => startLesson(b.dataset.lesson));
   }
 
   // ---------- Psaní ----------
@@ -223,13 +231,13 @@
   function startLesson(id, keepText) {
     const lesson = LESSONS.find(l => l.id === id);
     const lines = keepText || Lessons.generate(lesson, { length: settings().length }).lines;
-    beginSession({ kind: 'lesson', id, lesson, title: `Lekce ${id}: ${lesson.title}`, crumb: lesson.group, tip: lesson.tip, add: lesson.add, goal: lesson.goal, lines });
+    beginSession({ kind: 'lesson', id, lesson, title: `Lekce ${lesson.num}: ${lesson.title}`, crumb: lesson.group, tip: lesson.tip, add: lesson.add, goal: lesson.goal, blind: lesson.blind, lines });
   }
 
   function beginSession(cfg) {
     S = Object.assign(cfg, {
       text: cfg.lines.join('\n'), pos: 0, step: 0, errors: 0, keystrokes: 0, errAt: new Set(), missed: {},
-      elapsed: 0, last: null, started: false, paused: false, done: false, dead: null, deadCode: null, layoutWarn: 0,
+      elapsed: 0, last: null, started: false, paused: false, done: false, dead: null, deadCode: null, layoutWarn: 0, missHere: 0,
     });
     go('typing');
   }
@@ -256,7 +264,7 @@
       </div>
       <div class="textbox" id="textbox"></div>
       <div class="hint" id="hint"></div>
-      <div class="kb-wrap">${keyboardHtml()}${settings().showHands ? handsHtml() : ''}</div>`;
+      ${S.blind ? '' : `<div class="kb-wrap">${keyboardHtml()}${settings().showHands ? handsHtml() : ''}</div>`}`;
     $('#restartBtn').onclick = () => restart(false);
     if ($('#newTextBtn')) $('#newTextBtn').onclick = () => restart(true);
     $('#backBtn').onclick = () => go(S && S.kind === 'lesson' ? 'home' : S && S.kind === 'weak' ? 'weak' : S && S.kind === 'custom' ? 'custom' : 'home');
@@ -327,6 +335,10 @@
       $('#emuBtn').onclick = () => { settings().input = 'emulate'; save(); S.layoutWarn = 0; updateHint(); };
       return;
     }
+    if (S.blind && S.missHere < 2) {
+      hint.innerHTML = '🙈 Píšeš naslepo – klávesnice je skrytá. Nápověda se ukáže po dvou chybách na stejném znaku.';
+      return;
+    }
     const parts = seq.map((s, i) => {
       const key = Layout.rows.flat().find(k => k.code === s.code);
       let name = s.code === 'Space' ? 'mezerník' : s.code === 'Enter' ? 'Enter' : (key && (key.base || '').length === 1 ? key.base.toUpperCase() : s.code);
@@ -386,12 +398,14 @@
       S.spans[S.pos].classList.add(S.errAt.has(S.pos) ? 'err' : 'ok');
       S.pos++;
       S.step = 0;
+      S.missHere = 0;
       if (S.pos >= S.text.length) return finish();
       updateCursor();
     } else {
       S.errors++;
       ks.miss++;
       S.errAt.add(S.pos);
+      S.missHere++;
       S.missed[exp] = (S.missed[exp] || 0) + 1;
       if (settings().input === 'system' && code && Layout.charFromCode(code, false, false) !== null) {
         const want = Layout.sequence(exp);
@@ -492,7 +506,7 @@
     else if (stars === 2) msg = 'Skvělé! Lekce splněna.';
     else msg = S.goal ? `Splněno! Pro další hvězdu zkus dosáhnout ${S.goal} úhozů za minutu.` : 'Splněno!';
     const isLesson = S.kind === 'lesson';
-    const nextL = isLesson ? LESSONS.find(l => l.id === S.id + 1) : null;
+    const nextL = isLesson ? LESSONS[LESSONS.findIndex(l => l.id === S.id) + 1] : null;
     const primary = passed && nextL ? 'next' : 'again';
     openModal(`
       ${isLesson ? `<div class="result-stars">${starsHtml(stars).replace('class="stars"', '')}</div>` : ''}
@@ -667,7 +681,12 @@
           </div>
           <input type="file" id="importFile" accept=".json,application/json" class="hidden">
         </div>
+        <div class="card">
+          <h2>O programu</h2>
+          <div id="aboutBox"></div>
+        </div>
       </div>`;
+    renderAbout();
     $$('.seg').forEach(sg => sg.addEventListener('click', e => {
       const b = e.target.closest('button');
       if (!b) return;
@@ -726,6 +745,55 @@
       }).catch(() => confirmModal('Chyba', 'Soubor se nepodařilo načíst.', 'OK'));
     };
   }
+
+  // ---------- Aktualizace (jen v nainstalované aplikaci) ----------
+  const appInfo = window.appInfo || null;
+  let updateStatus = null;
+  function updateText(st) {
+    if (!st) return '';
+    switch (st.state) {
+      case 'checking': return 'Hledám aktualizace…';
+      case 'none': return 'Máš nejnovější verzi. 👍';
+      case 'downloading': return `Stahuji novou verzi ${esc(st.version || '')}… ${st.percent || 0} %`;
+      case 'ready': return `Nová verze <b>${esc(st.version)}</b> je stažená. Nainstaluje se při zavření programu, nebo hned:`;
+      case 'available-portable': return `Je k dispozici nová verze <b>${esc(st.version)}</b>.`;
+      case 'error': return 'Aktualizace se nepodařilo zkontrolovat. Jsi připojený k internetu?';
+      case 'dev': return 'Vývojová verze – aktualizace se nekontrolují.';
+    }
+    return '';
+  }
+  function updateButton(st) {
+    if (!st) return '';
+    if (st.state === 'ready') return '<button class="btn small primary" data-upd="install">Restartovat a aktualizovat</button>';
+    if (st.state === 'available-portable') return '<button class="btn small primary" data-upd="download">Stáhnout novou verzi</button>';
+    return '';
+  }
+  function bindUpdateButtons(root) {
+    $$('[data-upd]', root).forEach(b => b.onclick = () => (b.dataset.upd === 'install' ? appInfo.installUpdate() : appInfo.openDownload()));
+  }
+  function renderUpdateBox() {
+    const box = $('#updateBox');
+    const st = updateStatus;
+    const show = st && ['downloading', 'ready', 'available-portable'].includes(st.state);
+    box.classList.toggle('hidden', !show);
+    box.innerHTML = show ? `<div>⬆️ ${updateText(st)}</div>${updateButton(st)}` : '';
+    bindUpdateButtons(box);
+  }
+  function renderAbout() {
+    const el = $('#aboutBox');
+    if (!el) return;
+    if (!appInfo) { el.innerHTML = '<p class="muted">Spuštěno v prohlížeči – vždy se načte aktuální verze souborů.</p>'; return; }
+    el.innerHTML = `<div class="setting"><div><b>Verze ${esc(appInfo.version)}</b><div class="d" id="updText">${updateText(updateStatus) || 'Aktualizace se kontrolují automaticky při každém spuštění.'}</div></div>
+      <div class="row">${updateButton(updateStatus)}<button class="btn" id="checkUpd">Zkontrolovat aktualizace</button></div></div>`;
+    $('#checkUpd').onclick = () => appInfo.checkUpdates();
+    bindUpdateButtons(el);
+  }
+  if (appInfo) appInfo.onUpdateStatus(st => {
+    if ((st.state === 'none' || st.state === 'error' || st.state === 'dev') && !st.manual && current !== 'settings') return;
+    updateStatus = st;
+    renderUpdateBox();
+    renderAbout();
+  });
 
   // ---------- Nápověda ----------
   function renderHelp() {

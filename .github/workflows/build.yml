@@ -19,12 +19,16 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run dist
+      # Běžný push: jen sestavit. Tag v*: sestavit a zveřejnit jako Release (odtud se berou aktualizace).
+      - if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        run: npm run dist
+      - if: startsWith(github.ref, 'refs/tags/v')
+        run: npm run release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v4
         with:
           name: PsaniVsemiDeseti-Windows
-          path: dist/*.exe
-      - if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/*.exe
+          path: |
+            dist/*.exe
+            dist/latest.yml

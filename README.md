@@ -4,7 +4,8 @@ Moderní výukový program pro Windows, který tě naučí psát všemi deseti n
 
 ## Co umí
 
-- **61 lekcí** krok za krokem: základní řada → horní řada → dolní řada → velká písmena (Shift) → háčky a čárky → mrtvé klávesy (ó, ď, ť, ň, velká Č, Ř, Ů…) → čísla → interpunkce a znaky → slova, přísloví, jazykolamy a souvislé texty → závěrečný test.
+- **88 lekcí** krok za krokem: základní řada → horní řada → dolní řada → velká písmena (Shift), jména a města → háčky a čárky → mrtvé klávesy (ó, ď, ť, ň, velká Č, Ř, Ů…) → čísla, datum a čas → interpunkce a znaky → speciální znaky přes AltGr (@ # & € [ ] { } …) → slova, slabiky, přísloví, jazykolamy a 23 souvislých textů → závěrečný test.
+- Lekce **naslepo** se skrytou klávesnicí (nápověda se ukáže až po dvou chybách).
 - Text cvičení se **generuje pokaždé nový**, vždy jen z písmen, která už znáš (se skutečnými českými slovy).
 - **Klávesnice na obrazovce** s barvami prstů, zvýrazněnou další klávesou (včetně správného Shiftu) a **obrázek rukou**, který ukazuje, kterým prstem psát.
 - Měření **úhozů za minutu** (Shift a mrtvá klávesa se počítají jako úhoz navíc), **chybovosti** a času; hodnocení 1–3 hvězdami.
@@ -17,12 +18,27 @@ Moderní výukový program pro Windows, který tě naučí psát všemi deseti n
 
 ## Stažení pro Windows
 
-Hotové `.exe` sestavuje GitHub Actions (záložka **Actions** → poslední běh „Sestavení pro Windows“ → *Artifacts*):
+Nejnovější verze je vždy v sekci **[Releases](https://github.com/joshuaaaaa/psani/releases/latest)**:
 
-- `PsaniVsemiDeseti-Setup-2.0.0.exe` – instalátor (zástupce na ploše a v nabídce Start),
-- `PsaniVsemiDeseti-Portable-2.0.0.exe` – přenosná verze bez instalace.
+- `PsaniVsemiDeseti-Setup-X.Y.Z.exe` – instalátor (zástupce na ploše a v nabídce Start), **aktualizuje se sám**,
+- `PsaniVsemiDeseti-Portable-X.Y.Z.exe` – přenosná verze bez instalace; o nové verzi jen dá vědět.
 
-Po vytvoření tagu `v*` (např. `v2.0.0`) se soubory přidají i do sekce **Releases**.
+## Aktualizace
+
+- Nainstalovaný program při každém spuštění zkontroluje Releases. Novou verzi stáhne na pozadí a nainstaluje ji při zavření programu (nebo hned tlačítkem *Restartovat a aktualizovat*).
+- Ručně: *Nastavení → O programu → Zkontrolovat aktualizace*, nebo stačí stáhnout nový instalátor a spustit ho přes starou verzi.
+- **Postup a statistiky se při aktualizaci ani přeinstalaci neztratí** – jsou uložené zvlášť v `%APPDATA%\Psaní všemi deseti`. Pro jistotu je jde zálohovat v *Nastavení → Uložit zálohu*.
+- Automatické aktualizace vyžadují, aby byl repozitář veřejný (soukromé Releases program bez přihlášení nestáhne).
+
+### Jak vydat novou verzi
+
+1. Zvyš `version` v `package.json` (např. `2.2.0`).
+2. Commitni a pushni, pak vytvoř a pushni tag se stejným číslem:
+   ```bash
+   git tag v2.2.0
+   git push origin v2.2.0
+   ```
+3. GitHub Actions sestaví `.exe` a zveřejní je jako Release – nainstalované programy si je pak samy stáhnou.
 
 ## Vyzkoušení bez instalace
 
@@ -42,4 +58,4 @@ Struktura:
 - `app/js/lessons.js` – osnova kurzu a generátor cvičení
 - `app/js/data.js` – slova, věty, přísloví a texty
 - `app/js/app.js` – uživatelské rozhraní, měření, ukládání postupu
-- `main.js` – okno aplikace (Electron)
+- `main.js`, `preload.js` – okno aplikace a aktualizace (Electron)

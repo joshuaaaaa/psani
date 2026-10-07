@@ -148,6 +148,16 @@ nádraží jízdenka zastávka autobus tramvaj metro letiště přístav silnice
     { title: 'Bramborová polévka', text: 'Na bramborovou polévku potřebujeme brambory, mrkev, celer, cibuli, houby a trochu másla. Cibuli osmahneme na másle, přidáme nakrájenou zeleninu a zalijeme vodou. Vaříme asi dvacet minut, dokud zelenina nezměkne. Nakonec přidáme brambory, sušené houby, majoránku, česnek a sůl. Hotovou polévku podáváme s chlebem. Dobrou chuť!' },
     { title: 'Krkonoše', text: 'Krkonoše jsou nejvyšší pohoří v Česku. Na jejich hřebenech leží Sněžka, která měří tisíc šest set dva metry. V zimě sem jezdí lyžaři a v létě turisté, kteří chodí po značených cestách mezi horskými boudami. Podle pověsti v horách vládne Krakonoš, vousatý pán hor, který pomáhá poctivým lidem a trestá zlé a líné.' },
     { title: 'Klávesnice', text: 'Základní řada klávesnice je místo, kam se prsty vždy vracejí. Levá ruka leží na písmenech A, S, D a F, pravá na J, K, L a Ů. Na klávesách F a J jsou malé výstupky, podle kterých najdeme správnou polohu i bez dívání. Palce odpočívají na mezerníku. Každý prst má na starosti jen svůj sloupec kláves, a proto se nikdy nemusí natahovat daleko.' },
+    { title: 'Kolo', text: 'Jízdní kolo je jedním z nejlepších vynálezů. Nepotřebuje benzín, nedělá hluk a udržuje nás v kondici. Než vyrazíme na cestu, zkontrolujeme brzdy, nahustíme pneumatiky a nasadíme si helmu. Ve městě jezdíme vpravo a dáváme znamení rukou, když chceme odbočit. Na výletě se pak můžeme zastavit u rybníka, posvačit a pokračovat dál krajinou, kam by se autem nikdo nedostal.' },
+    { title: 'Pohádka o pejskovi a kočičce', text: 'Žili byli jednou pejsek a kočička, kteří bydleli spolu v malém domečku na kraji lesa. Jednoho dne se rozhodli, že upečou dort. Dali do něj všechno, co měli nejradši: mléko, vajíčka, cibuli, buřty i kus sýra. Dort byl obrovský a voněl po celém lese. Když ho však ochutnali, zjistili, že ne všechno dobré je dobré dohromady.' },
+    { title: 'Zahrada', text: 'Na jaře je na zahradě spousta práce. Musíme zrýt záhony, vysít mrkev, ředkvičky a hrášek a zasadit sazenice rajčat. Celé léto pak zaléváme, plejeme a čekáme, až všechno dozraje. Na podzim sklízíme jablka, hrušky a švestky. Část ovoce sníme hned, z dalšího uvaříme marmeládu a zbytek uložíme do sklepa na zimu.' },
+    { title: 'Hrad Karlštejn', text: 'Hrad Karlštejn nechal postavit císař Karel IV. ve čtrnáctém století. Měl v něm uchovávat korunovační klenoty a vzácné relikvie. Hrad stojí na vápencovém kopci nad řekou Berounkou a patří k nejnavštěvovanějším památkám u nás. Nejcennější je kaple svatého Kříže, jejíž stěny zdobí více než sto obrazů a tisíce drahých kamenů.' },
+    { title: 'Zimní radovánky', text: 'Když napadne první sníh, děti vyběhnou ven ještě před snídaní. Staví sněhuláky s mrkví místo nosu, koulují se a sáňkují z kopce za školou. Na zamrzlém rybníku se bruslí a hraje hokej. Večer se všichni vracejí domů s červenými tvářemi a mokrými rukavicemi a doma je čeká teplý čaj a horká polévka.' },
+    { title: 'Včely', text: 'Včely žijí ve velkých společenstvech, kterým říkáme včelstva. V jednom úlu jich může být až padesát tisíc. Každá včela má svou práci: některé sbírají nektar a pyl, jiné staví plástve, krmí larvy nebo hlídají vchod. Včely opylují květy ovocných stromů, a bez nich bychom tak neměli jablka ani třešně. Med je vlastně jen bonus.' },
+    { title: 'Dopis kamarádovi', text: 'Ahoj Tome, děkuji za tvůj dopis. U nás je všechno v pořádku. Ve škole teď probíráme vesmír a minulý týden jsme byli v planetáriu. Bylo to úžasné! O prázdninách pojedeme s rodiči k moři, ale v srpnu budu doma, tak se snad uvidíme. Nezapomeň mi napsat, jak dopadl tvůj fotbalový zápas. Měj se hezky, tvůj kamarád Pavel.' },
+    { title: 'Moře', text: 'Moře pokrývá více než dvě třetiny povrchu Země. Ukrývá nespočet živočichů, od drobného planktonu až po obrovské velryby. Voda v moři je slaná, protože řeky do něj po miliony let přinášejí rozpuštěné minerály. Příliv a odliv způsobuje Měsíc, který svou přitažlivostí zvedá hladinu oceánů. U moře se dobře odpočívá a dýchá.' },
+    { title: 'Jak vznikl internet', text: 'Internet vznikl jako síť, která měla propojit několik vědeckých počítačů. Nikdo tehdy netušil, že za pár desítek let k ní budou připojeny miliardy lidí. Dnes přes internet posíláme zprávy, nakupujeme, učíme se a sledujeme filmy. Je ale dobré myslet na bezpečnost: používat silná hesla, nesdílet osobní údaje a nevěřit všemu, co si přečteme.' },
+    { title: 'Pečení chleba', text: 'Domácí chléb voní tak, že se celá rodina sejde v kuchyni. Do mísy nasypeme mouku, přidáme sůl, kmín, kvásek a vlažnou vodu a vypracujeme hladké těsto. Necháme ho několik hodin kynout pod utěrkou. Pak bochník vytvarujeme, nařízneme a pečeme v horké troubě skoro hodinu. Kůrka má být křupavá a střída vláčná.' },
   ];
 
   const NUM_TEMPLATES = [
@@ -166,6 +176,44 @@ nádraží jízdenka zastávka autobus tramvaj metro letiště přístav silnice
     'Za {s} dny začínají prázdniny.',
     'Vypočítej {s} krát {t}.',
     'Mám {t} let a sestra {s}.',
+    'Sraz je v {h}:{mm} u hlavního vchodu.',
+    'Film začíná v {h}:{mm} a končí ve {h}:{mm}.',
+    'Rohlík stojí {s} Kč, chleba {t} Kč.',
+    'Sleva {t} % platí do {d}. {m}.',
+    'Výsledek zápasu: {s}:{s}.',
+    'Narodil jsem se {d}. {m}. {y}.',
+    'Vlak č. {n} má zpoždění {k} minut.',
+    'Recept: {s} vejce, {p} g mouky a {k} ml mléka.',
+    'Na účtu je {n} Kč.',
+    'Schůzka je naplánovaná na {d}. {m}. v {h}:{mm}.',
+  ];
+
+
+  const NAMES = `Jana Petr Pavel Martin Eva Anna Lucie Marek Jakub Adam David Filip Karel Josef Jan Hana Lenka Petra Monika
+    Tereza Ondra Vojta Honza Kamil Robert Daniel Michal Roman Milan Simona Veronika Barbora Kristina Denisa Nikola Marie Alena
+    Praha Brno Ostrava Liberec Olomouc Pardubice Kladno Jihlava Opava Most Teplice Chomutov Znojmo Trutnov Kolín Tábor Písek
+    Zlín Plzeň Třebíč Přerov Šumperk Děčín Jičín Mělník Beroun Kroměříž Třeboň Čáslav Žatec Říčany Vltava Labe Morava Sněžka
+    Šárka Jiří Tomáš Lukáš Klára Zuzana Štěpán Matěj Vít Radek Žaneta Ivana Dana Ota Ema Ela Leoš Řehoř Čeněk`.split(/\s+/).filter(Boolean);
+
+  const SYLLABLES = ['pro', 'při', 'pře', 'ní', 'ost', 'str', 'sk', 'ov', 'ou', 'je', 'ce', 'ka', 'ko', 'ta', 'ra', 'na', 'ne', 'po', 'za', 'st', 'le', 'li', 'ho', 'va', 'ře', 'ště', 'tel', 'ova', 'ení'];
+
+  const ALTGR_LINES = [
+    'Napiš mi na adresu jana.novakova@email.cz.',
+    'Můj e-mail je petr@skola.cz, tak se ozvi.',
+    'Kontakt: info@obchod.cz, tel. 777 123 456',
+    'Firma Novák & syn prodává nářadí.',
+    'Na sociálních sítích sleduj #psanivsemideseti.',
+    'Lístek do kina stál 12 € a popcorn 5 €.',
+    'Cena knihy je 20 $.',
+    'Výpočet: 3 * 4 = 12 a 10 > 7, ale 2 < 5.',
+    'Soubor je ve složce C:\\Dokumenty\\Skola.',
+    'Volby: ano | ne | nevím',
+    'V poznámce [1] najdeš zdroj.',
+    'V kódu se používají složené závorky { a }.',
+    'Hodnocení: ***** (pět hvězdiček)',
+    'Heslo: Kocka&Pes#2026',
+    'Seznam [mléko, chleba, máslo] je hotový.',
+    'Pošli fotky na foto@rodina.cz, prosím.',
   ];
 
   function words(str) { return str.split(/\s+/).filter(Boolean); }
@@ -173,6 +221,6 @@ nádraží jízdenka zastávka autobus tramvaj metro letiště přístav silnice
   return {
     WORDS: Array.from(new Set(words(WORDS))),
     COMMON: words(COMMON),
-    SENTENCES, PROVERBS, TEXTS, NUM_TEMPLATES,
+    SENTENCES, PROVERBS, TEXTS, NUM_TEMPLATES, NAMES, SYLLABLES, ALTGR_LINES,
   };
 })();

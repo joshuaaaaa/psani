@@ -1,65 +1,92 @@
 'use strict';
 // Osnova kurzu a generování textu cvičení.
 const Lessons = (() => {
+  // key: stálý identifikátor lekce (podle něj se ukládá postup – neměnit!)
   // add: nová písmena (malá); caps: 'right' | 'left' | 'dia' přidá velká písmena;
-  // type: keys (výchozí) | review | words | sentences | caps | numbers | numtext | symbols | symtext | common | long | proverbs | text | exam
+  // type: keys (výchozí) | review | words | sentences | caps | names | numbers | numtext | symbols | symtext | altgrtext
+  //       | common | long | syllables | proverbs | twisters | text | exam; blind: skrytá klávesnice
   const DEFS = [
-    { group: 'Základní řada', title: 'F a J', add: 'fj', tip: 'Polož ukazováčky na klávesy F a J – nahmatáš na nich malé výstupky. Ostatní prsty leží vedle nich na A S D a K L Ů, palce na mezerníku. Na klávesnici se nedívej!' },
-    { title: 'D a K', add: 'dk', tip: 'D píše levý prostředníček, K pravý prostředníček. Po každém úhozu se prst vrací na své místo.' },
-    { title: 'S a L', add: 'sl', tip: 'S píše levý prsteníček, L pravý prsteníček.' },
-    { title: 'A a Ů', add: 'aů', tip: 'A a Ů píšou malíčky. Teď máš pod prsty celou základní řadu.' },
-    { title: 'Opakování základní řady', type: 'review', from: 'fjdksla' },
-    { title: 'G a H', add: 'gh', tip: 'G a H píšou ukazováčky – stačí je posunout o jednu klávesu ke středu a hned se vrátit zpět.' },
-    { title: 'Slova ze základní řady', type: 'words' },
+    { key: 'fj', group: 'Základní řada', title: 'F a J', add: 'fj', tip: 'Polož ukazováčky na klávesy F a J – nahmatáš na nich malé výstupky. Ostatní prsty leží vedle nich na A S D a K L Ů, palce na mezerníku. Na klávesnici se nedívej!' },
+    { key: 'dk', title: 'D a K', add: 'dk', tip: 'D píše levý prostředníček, K pravý prostředníček. Po každém úhozu se prst vrací na své místo.' },
+    { key: 'sl', title: 'S a L', add: 'sl', tip: 'S píše levý prsteníček, L pravý prsteníček.' },
+    { key: 'au', title: 'A a Ů', add: 'aů', tip: 'A a Ů píšou malíčky. Teď máš pod prsty celou základní řadu.' },
+    { key: 'rev-home', title: 'Opakování základní řady', type: 'review', from: 'fjdksla' },
+    { key: 'gh', title: 'G a H', add: 'gh', tip: 'G a H píšou ukazováčky – stačí je posunout o jednu klávesu ke středu a hned se vrátit zpět.' },
+    { key: 'words-home', title: 'Slova ze základní řady', type: 'words' },
+    { key: 'blind-home', title: 'Naslepo: základní řada', type: 'review', from: 'asdfghjklů', blind: true, tip: 'Klávesnice je teď skrytá. Spolehni se na hmat – výstupky na F a J ti pomohou najít polohu.' },
 
-    { group: 'Horní řada', title: 'E a I', add: 'ei', tip: 'E píše levý prostředníček, I pravý prostředníček. Prst vyjede nahoru a vrátí se na D/K.' },
-    { title: 'R a U', add: 'ru', tip: 'R a U píšou ukazováčky směrem nahoru (z F na R, z J na U).' },
-    { title: 'Opakování E I R U', type: 'review', from: 'eiru' },
-    { title: '{T} a {Z}', add: 'tz', tip: '{T} píše levý ukazováček, {Z} pravý ukazováček – jsou nahoře šikmo ke středu.' },
-    { title: 'W a O', add: 'wo', tip: 'W píše levý prsteníček, O pravý prsteníček.' },
-    { title: 'Q a P', add: 'qp', tip: 'Q a P píšou malíčky. Ostatní prsty nech na základní řadě.' },
-    { title: 'Ú', add: 'ú', tip: 'Ú píše pravý malíček – klávesa je vpravo vedle P.' },
-    { title: 'Slova – horní a základní řada', type: 'words' },
+    { key: 'ei', group: 'Horní řada', title: 'E a I', add: 'ei', tip: 'E píše levý prostředníček, I pravý prostředníček. Prst vyjede nahoru a vrátí se na D/K.' },
+    { key: 'ru', title: 'R a U', add: 'ru', tip: 'R a U píšou ukazováčky směrem nahoru (z F na R, z J na U).' },
+    { key: 'rev-eiru', title: 'Opakování E I R U', type: 'review', from: 'eiru' },
+    { key: 'tz', title: '{T} a {Z}', add: 'tz', tip: '{T} píše levý ukazováček, {Z} pravý ukazováček – jsou nahoře šikmo ke středu.' },
+    { key: 'wo', title: 'W a O', add: 'wo', tip: 'W píše levý prsteníček, O pravý prsteníček.' },
+    { key: 'qp', title: 'Q a P', add: 'qp', tip: 'Q a P píšou malíčky. Ostatní prsty nech na základní řadě.' },
+    { key: 'u-acute', title: 'Ú', add: 'ú', tip: 'Ú píše pravý malíček – klávesa je vpravo vedle P.' },
+    { key: 'rev-top', title: 'Opakování horní řady', type: 'review', from: 'tzwoqpú' },
+    { key: 'words-top', title: 'Slova – horní a základní řada', type: 'words' },
 
-    { group: 'Dolní řada', title: 'V a M', add: 'vm', tip: 'V píše levý ukazováček (dolů z F), M pravý ukazováček (dolů z J).' },
-    { title: 'C a čárka', add: 'c,', tip: 'C píše levý prostředníček, čárku pravý prostředníček. Za čárkou vždy píšeme mezeru.' },
-    { title: 'X a tečka', add: 'x.', tip: 'X píše levý prsteníček, tečku pravý prsteníček.' },
-    { title: '{Y} a pomlčka', add: 'y-', tip: '{Y} píše levý malíček, pomlčku pravý malíček.' },
-    { title: 'B a N', add: 'bn', tip: 'B píše levý ukazováček, N pravý ukazováček. Pozor, B je ještě o kus dál ke středu.' },
-    { title: 'Slova – celá abeceda', type: 'words' },
-    { title: 'Krátké věty bez háčků', type: 'sentences', lower: true, strip: true },
+    { key: 'vm', group: 'Dolní řada', title: 'V a M', add: 'vm', tip: 'V píše levý ukazováček (dolů z F), M pravý ukazováček (dolů z J).' },
+    { key: 'c-comma', title: 'C a čárka', add: 'c,', tip: 'C píše levý prostředníček, čárku pravý prostředníček. Za čárkou vždy píšeme mezeru.' },
+    { key: 'x-dot', title: 'X a tečka', add: 'x.', tip: 'X píše levý prsteníček, tečku pravý prsteníček.' },
+    { key: 'y-dash', title: '{Y} a pomlčka', add: 'y-', tip: '{Y} píše levý malíček, pomlčku pravý malíček.' },
+    { key: 'bn', title: 'B a N', add: 'bn', tip: 'B píše levý ukazováček, N pravý ukazováček. Pozor, B je ještě o kus dál ke středu.' },
+    { key: 'rev-bottom', title: 'Opakování dolní řady', type: 'review', from: 'vmcxybn' },
+    { key: 'words-all', title: 'Slova – celá abeceda', type: 'words' },
+    { key: 'sent-lower', title: 'Krátké věty bez háčků', type: 'sentences', lower: true, strip: true },
+    { key: 'blind-all', title: 'Naslepo: celá abeceda', type: 'words', blind: true, tip: 'Bez klávesnice na obrazovce. Když nevíš, vrať prsty na základní řadu a zkus to znovu.' },
 
-    { group: 'Velká písmena', title: 'Levý Shift', caps: 'right', type: 'caps', tip: 'Velká písmena pravé ruky píšeme s levým Shiftem (levý malíček). Shift drž, ukonči úhoz a pak ho pusť.' },
-    { title: 'Pravý Shift', caps: 'left', type: 'caps', tip: 'Velká písmena levé ruky píšeme s pravým Shiftem (pravý malíček).' },
-    { title: 'Věty s velkými písmeny', type: 'sentences', strip: true },
+    { key: 'shift-left', group: 'Velká písmena', title: 'Levý Shift', caps: 'right', type: 'caps', tip: 'Velká písmena pravé ruky píšeme s levým Shiftem (levý malíček). Shift drž, ukonči úhoz a pak ho pusť.' },
+    { key: 'shift-right', title: 'Pravý Shift', caps: 'left', type: 'caps', tip: 'Velká písmena levé ruky píšeme s pravým Shiftem (pravý malíček).' },
+    { key: 'names', title: 'Jména a města', type: 'names', tip: 'Vlastní jména začínají velkým písmenem. Pamatuj: Shift vždy na opačné straně než písmeno.' },
+    { key: 'sent-caps', title: 'Věty s velkými písmeny', type: 'sentences', strip: true },
 
-    { group: 'Háčky a čárky', title: 'Ě a Š', add: 'ěš', tip: 'Háčky a čárky jsou v horní (číselné) řadě. Ě píše levý prsteníček, Š levý prostředníček. Natáhni prst a hned se vrať na základní řadu.' },
-    { title: 'Č a Ř', add: 'čř', tip: 'Č i Ř píše levý ukazováček (z klávesy F nahoru přes R).' },
-    { title: 'Ž a Ý', add: 'žý', tip: 'Ž i Ý píše pravý ukazováček.' },
-    { title: 'Á a Í', add: 'áí', tip: 'Á píše pravý prostředníček, Í pravý prsteníček.' },
-    { title: 'É', add: 'é', tip: 'É píše pravý malíček.' },
-    { title: 'Slova s háčky a čárkami', type: 'words' },
-    { title: 'Mrtvé klávesy: ó ď ť ň', add: 'óďťň', tip: 'Některá písmena nemají vlastní klávesu. Nejdřív stiskni čárku ´ nebo háček ˇ (Shift + ´, vpravo nahoře, pravý malíček) a potom písmeno. Na obrazovce se po prvním úhozu ještě nic neobjeví – to je v pořádku.' },
-    { title: 'Velká písmena s diakritikou', caps: 'dia', type: 'caps', tip: 'Velké Č, Ř, Š… píšeme přes háček: ˇ (Shift + ´) a pak Shift + písmeno. Velké Á, É, Í, Ú přes čárku ´ a Shift + písmeno. Ů přes kroužek ° (Shift + ;).' },
-    { title: 'Věty s diakritikou', type: 'sentences' },
-    { title: 'Krátký text', type: 'text', text: 13 },
+    { key: 'es', group: 'Háčky a čárky', title: 'Ě a Š', add: 'ěš', tip: 'Háčky a čárky jsou v horní (číselné) řadě. Ě píše levý prsteníček, Š levý prostředníček. Natáhni prst a hned se vrať na základní řadu.' },
+    { key: 'cr', title: 'Č a Ř', add: 'čř', tip: 'Č i Ř píše levý ukazováček (z klávesy F nahoru přes R).' },
+    { key: 'zy', title: 'Ž a Ý', add: 'žý', tip: 'Ž i Ý píše pravý ukazováček.' },
+    { key: 'rev-hacky', title: 'Opakování ě š č ř ž', type: 'review', from: 'ěščřž' },
+    { key: 'ai', title: 'Á a Í', add: 'áí', tip: 'Á píše pravý prostředníček, Í pravý prsteníček.' },
+    { key: 'e-acute', title: 'É', add: 'é', tip: 'É píše pravý malíček.' },
+    { key: 'rev-carky', title: 'Opakování ý á í é', type: 'review', from: 'ýáíé' },
+    { key: 'words-uu', title: 'Ú a Ů ve slovech', type: 'words', focus: 'úů', tip: 'Ú píšeme na začátku slova (úkol, úterý), Ů uprostřed a na konci (dům, stůl).' },
+    { key: 'words-dia', title: 'Slova s háčky a čárkami', type: 'words', focus: 'ěščřžýáíé' },
+    { key: 'dead', title: 'Mrtvé klávesy: ó ď ť ň', add: 'óďťň', tip: 'Některá písmena nemají vlastní klávesu. Nejdřív stiskni čárku ´ nebo háček ˇ (Shift + ´, vpravo nahoře, pravý malíček) a potom písmeno. Na obrazovce se po prvním úhozu ještě nic neobjeví – to je v pořádku.' },
+    { key: 'caps-dia', title: 'Velká písmena s diakritikou', caps: 'dia', type: 'caps', tip: 'Velké Č, Ř, Š… píšeme přes háček: ˇ (Shift + ´) a pak Shift + písmeno. Velké Á, É, Í, Ú přes čárku ´ a Shift + písmeno. Ů přes kroužek ° (Shift + ;).' },
+    { key: 'sent-dia', title: 'Věty s diakritikou', type: 'sentences' },
+    { key: 'text-short', title: 'Krátký text', type: 'text', text: 13 },
 
-    { group: 'Čísla a znaky', title: 'Čísla 1 2 3 4 5', add: '12345', type: 'numbers', tip: 'Na české klávesnici se čísla píšou se Shiftem. Levá ruka: 1 malíček, 2 prsteníček, 3 prostředníček, 4 a 5 ukazováček.' },
-    { title: 'Čísla 6 7 8 9 0', add: '67890', type: 'numbers', tip: 'Pravá ruka: 6 a 7 ukazováček, 8 prostředníček, 9 prsteníček, 0 malíček. Shift mačká levý malíček.' },
-    { title: 'Čísla v textu', type: 'numtext' },
-    { title: 'Otazník, dvojtečka, podtržítko', add: '?:_', type: 'symbols', tip: '? je Shift + čárka, : je Shift + tečka, _ je Shift + pomlčka. Shift mačká levý malíček.' },
-    { title: 'Vykřičník, uvozovky, apostrof', add: '!"\'', type: 'symbols', tip: '! je Shift + §, " je Shift + ů, apostrof je Shift + ¨ (vedle Enteru). Vše pravý malíček.' },
-    { title: 'Závorky, lomítko, procenta', add: '()/%', type: 'symbols', tip: ') je vpravo vedle Ú, ( je Shift + ). / je Shift + ú, % je Shift + =.' },
-    { title: 'Plus, rovná se, středník', add: '+=;', type: 'symbols', tip: '+ je vlevo nahoře (levý malíček), = vpravo nahoře (pravý malíček), středník ; úplně vlevo nahoře.' },
-    { title: 'Znaky v praxi', type: 'symtext' },
+    { key: 'num1', group: 'Čísla a znaky', title: 'Čísla 1 2 3 4 5', add: '12345', type: 'numbers', tip: 'Na české klávesnici se čísla píšou se Shiftem. Levá ruka: 1 malíček, 2 prsteníček, 3 prostředníček, 4 a 5 ukazováček.' },
+    { key: 'num2', title: 'Čísla 6 7 8 9 0', add: '67890', type: 'numbers', tip: 'Pravá ruka: 6 a 7 ukazováček, 8 prostředníček, 9 prsteníček, 0 malíček. Shift mačká levý malíček.' },
+    { key: 'numtext', title: 'Čísla v textu', type: 'numtext' },
+    { key: 'sym1', title: 'Otazník, dvojtečka, podtržítko', add: '?:_', type: 'symbols', tip: '? je Shift + čárka, : je Shift + tečka, _ je Shift + pomlčka. Shift mačká levý malíček.' },
+    { key: 'sym2', title: 'Vykřičník, uvozovky, apostrof', add: '!"\'', type: 'symbols', tip: '! je Shift + §, " je Shift + ů, apostrof je Shift + ¨ (vedle Enteru). Vše pravý malíček.' },
+    { key: 'sym3', title: 'Závorky, lomítko, procenta', add: '()/%', type: 'symbols', tip: ') je vpravo vedle Ú, ( je Shift + ). / je Shift + ú, % je Shift + =.' },
+    { key: 'sym4', title: 'Plus, rovná se, středník', add: '+=;', type: 'symbols', tip: '+ je vlevo nahoře (levý malíček), = vpravo nahoře (pravý malíček), středník ; úplně vlevo nahoře.' },
+    { key: 'numtext2', title: 'Datum, čas a ceny', type: 'numtext', tip: 'Čas píšeme s dvojtečkou (7:45), datum s tečkami a mezerami (1. 9. 2026).' },
+    { key: 'symtext', title: 'Znaky v praxi', type: 'symtext' },
 
-    { group: 'Plynulé psaní', title: 'Nejčastější slova', type: 'common' },
-    { title: 'Dlouhá slova', type: 'long' },
-    { title: 'Přísloví', type: 'proverbs' },
-    { title: 'Jazykolamy', type: 'twisters' },
+    { key: 'altgr-at', group: 'Speciální znaky (AltGr)', title: 'Zavináč @', add: '@', type: 'symbols', tip: 'Pravý Alt (AltGr) drží pravý palec. @ = AltGr + V. Hodí se pro e-mailové adresy.' },
+    { key: 'altgr-1', title: '# & $ *', add: '#&$*', type: 'symbols', tip: '# = AltGr + X, & = AltGr + C, $ = AltGr + Ů, * = AltGr + pomlčka.' },
+    { key: 'altgr-2', title: 'Závorky [ ] { } < >', add: '[]{}<>', type: 'symbols', tip: '[ = AltGr + F, ] = AltGr + G, { = AltGr + B, } = AltGr + N, < = AltGr + čárka, > = AltGr + tečka.' },
+    { key: 'altgr-3', title: 'Euro, zpětné lomítko, svislítko', add: '€\\|', type: 'symbols', tip: '€ = AltGr + E, \\ = AltGr + Q, | = AltGr + W.' },
+    { key: 'altgr-text', title: 'E-maily a speciální znaky', type: 'altgrtext' },
+
+    { key: 'common', group: 'Plynulé psaní', title: 'Nejčastější slova', type: 'common' },
+    { key: 'short', title: 'Krátká slova', type: 'short' },
+    { key: 'syllables', title: 'Časté slabiky', type: 'syllables', tip: 'Časté skupiny písmen se brzy naučíš psát jedním plynulým pohybem.' },
+    { key: 'long', title: 'Dlouhá slova', type: 'long' },
+    { key: 'proverbs', title: 'Přísloví', type: 'proverbs' },
+    { key: 'twisters', title: 'Jazykolamy', type: 'twisters' },
+    { key: 'blind-proverbs', title: 'Naslepo: přísloví', type: 'proverbs', blind: true },
   ];
-  DATA.TEXTS.forEach((t, i) => { if (i !== 13) DEFS.push({ title: 'Text: ' + t.title, type: 'text', text: i }); });
-  DEFS.push({ title: 'Závěrečný test', type: 'exam', tip: 'Dlouhý text na závěr. Hlídej si přesnost, rychlost přijde sama.' });
+  DATA.TEXTS.forEach((t, i) => { if (i !== 13) DEFS.push({ key: 'text-' + i, title: (i >= 18 && i % 2 === 0 ? 'Naslepo: ' : 'Text: ') + t.title, type: 'text', text: i, blind: i >= 18 && i % 2 === 0 }); });
+  DEFS.push({ key: 'exam', title: 'Závěrečný test', type: 'exam', tip: 'Dlouhý text na závěr. Hlídej si přesnost, rychlost přijde sama.' });
+
+  // Pořadí lekcí ve verzi 2.0 (postup se tehdy ukládal podle čísla lekce).
+  const OLD_ORDER = ['fj', 'dk', 'sl', 'au', 'rev-home', 'gh', 'words-home', 'ei', 'ru', 'rev-eiru', 'tz', 'wo', 'qp', 'u-acute', 'words-top',
+    'vm', 'c-comma', 'x-dot', 'y-dash', 'bn', 'words-all', 'sent-lower', 'shift-left', 'shift-right', 'sent-caps',
+    'es', 'cr', 'zy', 'ai', 'e-acute', 'words-dia', 'dead', 'caps-dia', 'sent-dia', 'text-short',
+    'num1', 'num2', 'numtext', 'sym1', 'sym2', 'sym3', 'sym4', 'symtext', 'common', 'long', 'proverbs', 'twisters',
+    'text-0', 'text-1', 'text-2', 'text-3', 'text-4', 'text-5', 'text-6', 'text-7', 'text-8', 'text-9', 'text-10', 'text-11', 'text-12', 'exam'];
 
   const LOWER = 'aábcčdďeéěfghiíjklmnňoópqrřsštťuúůvwxyýzž';
   const DIA = 'áčďéěíňóřšťúůýž';
@@ -111,9 +138,9 @@ const Lessons = (() => {
       }
       if (def.caps === 'dia') for (const c of [...allowed]) if (LOWER.includes(c)) allowed.add(c.toUpperCase());
       return {
-        id: i + 1, group, def, title: title(def), tip: tip(def),
-        add, allowed: new Set(allowed),
-        goal: Math.min(240, 60 + i * 3),
+        id: def.key, num: i + 1, group, def, title: title(def), tip: tip(def),
+        add, allowed: new Set(allowed), blind: !!def.blind,
+        goal: Math.min(220, 60 + i * 2),
       };
     });
   }
@@ -204,7 +231,13 @@ const Lessons = (() => {
         break;
       }
       case 'words': {
-        tokens = wordTokens(r, allowed, '', tokCount) || drillTokens(r, letters, letters, tokCount);
+        tokens = wordTokens(r, allowed, def.focus || '', tokCount) || drillTokens(r, letters, letters, tokCount);
+        break;
+      }
+      case 'names': {
+        const names = DATA.NAMES.filter(w => fits(w, allowed));
+        const plain = DATA.WORDS.filter(w => fits(w, allowed));
+        for (let i = 0; i < tokCount; i++) tokens.push(r() < 0.6 ? pick(r, names) : pick(r, plain));
         break;
       }
       case 'caps': {
@@ -252,8 +285,8 @@ const Lessons = (() => {
           d: n(1, 28), m: n(1, 12), y: n(1950, 2030), h: n(5, 23), mm: n(10, 59), s: n(2, 9), p: n(59, 499),
           t: n(12, 35), k: n(3, 120), n: n(100, 9999), tel: n(600, 799) + ' ' + n(100, 999) + ' ' + n(100, 999), psc: n(100, 799) + ' ' + n(10, 99),
         })[k]);
-        let len = 0;
-        while (len < target) {
+        let len = 0, tries = 0;
+        while (len < target && tries++ < 2000) {
           const s = fill(pick(r, DATA.NUM_TEMPLATES)).replace(/ /g, ' ');
           if (!fits(s, allowed)) continue;
           tokens.push(...s.split(' ')); len += s.length + 1;
@@ -269,9 +302,33 @@ const Lessons = (() => {
           '!': () => pick(r, plain) + '!', '"': () => '"' + pick(r, plain) + '"', "'": () => "'" + pick(r, plain) + "'",
           '(': () => '(' + pick(r, plain) + ')', ')': () => '(' + num() + ')', '/': () => pick(r, plain) + '/' + pick(r, plain), '%': () => num() + '%',
           '+': () => num() + '+' + num(), '=': () => num() + '=' + num(), ';': () => pick(r, plain) + ';',
+          '@': () => pick(r, plain) + '@' + pick(r, plain) + '.cz', '#': () => '#' + pick(r, plain), '&': () => pick(r, plain) + '&' + pick(r, plain),
+          '$': () => num() + '$', '*': () => num() + '*' + num(), '[': () => '[' + pick(r, plain) + ']', ']': () => '[' + num() + ']',
+          '{': () => '{' + pick(r, plain) + '}', '}': () => '{' + num() + '}', '<': () => '<' + pick(r, plain) + '>', '>': () => num() + '>' + num(),
+          '€': () => num() + '€', '\\': () => pick(r, plain) + '\\' + pick(r, plain), '|': () => pick(r, plain) + '|' + pick(r, plain),
         };
         for (const s of syms) tokens.push(s + s + s);
         for (let i = 0; i < tokCount; i++) tokens.push(r() < 0.65 ? make[pick(r, syms)]() : pick(r, plain));
+        break;
+      }
+      case 'altgrtext': {
+        const src = shuffle(r, DATA.ALTGR_LINES.filter(s => fits(s, allowed)));
+        let len = 0;
+        for (const s of src) { if (len > target) break; tokens.push(...s.split(' ')); len += s.length + 1; }
+        break;
+      }
+      case 'short': {
+        const short = DATA.WORDS.concat(DATA.COMMON).filter(w => w.length <= 4);
+        for (let i = 0; i < tokCount * 1.3; i++) tokens.push(pick(r, short));
+        break;
+      }
+      case 'syllables': {
+        for (let i = 0; i < tokCount * 0.8; i++) {
+          const syl = pick(r, DATA.SYLLABLES);
+          const ws = DATA.WORDS.filter(w => w.includes(syl));
+          tokens.push(syl + syl);
+          if (ws.length) tokens.push(pick(r, ws));
+        }
         break;
       }
       case 'symtext': {
@@ -310,7 +367,7 @@ const Lessons = (() => {
       }
     }
     let out = wrap(tokens, width);
-    if (!['sentences', 'symtext', 'proverbs', 'twisters', 'numtext'].includes(def.type)) out = out.slice(0, lines);
+    if (!['sentences', 'symtext', 'altgrtext', 'proverbs', 'twisters', 'numtext'].includes(def.type)) out = out.slice(0, lines);
     return { lines: out.length ? out : ['fff jjj fff jjj'] };
   }
 
@@ -344,5 +401,5 @@ const Lessons = (() => {
     return { lines, skipped };
   }
 
-  return { list, generate, weak, normalizeCustom, LOWER };
+  return { list, generate, weak, normalizeCustom, LOWER, OLD_ORDER };
 })();
