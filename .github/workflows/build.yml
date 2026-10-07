@@ -32,12 +32,17 @@ jobs:
           elif [[ "$GITHUB_REF_NAME" == "${{ github.event.repository.default_branch }}" ]] && ! gh release view "v$V" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then NEW=true; fi
           echo "Verze $V, vydat: $NEW"
           echo "release=$NEW" >> "$GITHUB_OUTPUT"
-      - if: steps.ver.outputs.release != 'true'
-        run: npm run dist
+      - run: npm run dist
       - if: steps.ver.outputs.release == 'true'
-        run: npm run release
+        name: Zveřejnit Release
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          V=$(node -p "require('./package.json').version")
+          gh release create "v$V" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Psaní všemi deseti $V" \
+            --notes "Instalátor: PsaniVsemiDeseti-Setup-$V.exe (aktualizuje se sám). Přenosná verze: PsaniVsemiDeseti-Portable-$V.exe." \
+            dist/*.exe dist/*.blockmap dist/latest.yml
       - uses: actions/upload-artifact@v4
         with:
           name: PsaniVsemiDeseti-Windows

@@ -1,7 +1,7 @@
 {
   "name": "psani-vsemi-deseti",
   "productName": "Psaní všemi deseti",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Výukový program pro psaní všemi deseti na české klávesnici",
   "main": "main.js",
   "author": "Psaní všemi deseti",
@@ -9,8 +9,7 @@
   "private": true,
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder --win --x64 --publish never",
-    "release": "electron-builder --win --x64 --publish always"
+    "dist": "electron-builder --win --x64 --publish never"
   },
   "devDependencies": {
     "electron": "^44.6.0",
